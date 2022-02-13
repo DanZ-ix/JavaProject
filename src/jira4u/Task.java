@@ -9,13 +9,13 @@ public class Task {
     private String name;
     private String description;
     private String deadLine;
-    private Priority priority;
+    private String priority;
     private User worker;
     private User reviewer;
     private String status;
     //endregion
 
-    public Task(String name, Priority priority, String description, String deadLine, User worker, User reviewer)
+    public Task(String name, String priority, String description, String deadLine, User worker, User reviewer)
     {
         this.name = name;
         this.description = description;
@@ -64,27 +64,12 @@ public class Task {
         this.deadLine = deadLine;
     }
 
-    public String getPriority() {
-
-        switch (this.priority)
-        {
-            case MIDDLE:
-                return "Средний";
-            case LOW:
-                return "Низкий";
-            case HIGH:
-                return "Высокий";
-            case LOWEST:
-                return "Самый низкий";
-            case HIGHEST:
-                return "Самый высокий";
-            case CRITICAL:
-                return "Критический";
-        }
-        return "Средний";
+    public String getPriority()
+    {
+        return priority;
     }
 
-    public void setPriority(Priority priority) {
+    public void setPriority(String priority) {
         this.priority = priority;
     }
 

@@ -24,6 +24,9 @@ public class Jira4U extends Application {
     public final static String STATUS_IN_WORK = "В работе";
     public final static String STATUS_All= "Все";
 
+    public final static  String[] priorities = new String[]{"Самый низкий", "Низкий", "Средний", "Высокий", "Самый высокий", "Критический"};
+
+
     public final static int SC_WIDTH = 1600;
     public final static int SC_HEIGHT = 900;
     public final static Color BACKGROUND = Color.AQUA;
@@ -42,6 +45,8 @@ public class Jira4U extends Application {
         scene.setFill(BACKGROUND);
 
 
+
+
         primaryStage.setTitle("Jira4U");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -52,6 +57,8 @@ public class Jira4U extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+
 
 }
 

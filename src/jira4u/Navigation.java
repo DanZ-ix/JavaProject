@@ -1,6 +1,7 @@
 package jira4u;
 
 
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -10,6 +11,9 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
+import javafx.scene.control.ComboBox;
 import jira4u.*;
 
 import static jira4u.Jira4U.*;
@@ -19,7 +23,116 @@ public class Navigation {
 
     public static void addNewTask()
     {
+        VBox box = new VBox();
 
+        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
+
+
+        HBox nameStatusPriority = new HBox();
+
+
+        BorderPane namePane = getPaneWithText("", SC_HEIGHT / 15, SC_WIDTH / 5, Color.ORANGE, "Название задачи");
+        TextField nameTextField = addFieldToNode(namePane);
+        nameStatusPriority.getChildren().add(namePane);
+
+        nameStatusPriority.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
+        nameStatusPriority.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
+
+
+        BorderPane priorityPane = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.ORANGERED, "Приоритет");
+
+        ComboBox<String> priorityComboBox = addComboBox(priorityPane, priorities);
+
+
+
+
+        nameStatusPriority.getChildren().add(priorityPane);
+
+
+        String priority = Jira4U.priorities[3];
+
+        box.getChildren().add(nameStatusPriority);
+        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
+
+
+
+        BorderPane descPane = getPaneWithText(" ", SC_HEIGHT / 4, (int) (SC_WIDTH * 0.8), Color.WHITE, "Описание");
+        TextArea descTextArea = addAreaToNode(descPane);
+        box.getChildren().add(descPane);
+
+        HBox lowDesc = new HBox();
+        VBox people = new VBox();
+
+        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));
+
+        people.getChildren().add(getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Исполнитель"));
+        people.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));
+        people.getChildren().add(getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Проверяющий"));
+
+        lowDesc.getChildren().add(people);
+        lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
+        lowDesc.getChildren().add(getPaneWithText(" ", SC_HEIGHT / 7, SC_WIDTH / 5, Color.WHITE, "Срок сдачи"));
+
+
+        StackPane button = getPaneWithText("Добавить", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.GREEN);
+        lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
+
+        button.setOnMouseClicked((MouseEvent click) -> {
+
+            Task newTask = new Task(
+                    nameTextField.getText(),
+                    priorityComboBox.getValue(),
+                    descTextArea.getText(),
+                    "huy",
+                    new User("dowkaod", "dopwad", "Name", new Access("LOW")),
+                    new User("dowkaod", "dopwad", "Name", new Access("LOW"))
+            );
+
+            BackLog.addTask(newTask);
+
+
+            removeAll();
+            showTasks(STATUS_All);
+
+        });
+
+
+        lowDesc.getChildren().add(button);
+
+
+        box.getChildren().add(lowDesc);
+
+        box.setLayoutY(SC_HEIGHT * 0.05);
+        box.setLayoutX(SC_WIDTH * 0.1);
+
+        root.getChildren().add(box);
+    }
+
+
+    public static ComboBox<String> addComboBox(BorderPane node, String[] list)
+    {
+        ObservableList<String> observableList = FXCollections.observableArrayList(list);
+
+        ComboBox<String> comboBox = new ComboBox<String>(observableList);
+        comboBox.setValue(list[0]);
+        node.setCenter(comboBox);
+
+        return comboBox;
+    }
+
+
+    public static TextField addFieldToNode(BorderPane node)
+    {
+        TextField txtField = new TextField();
+        node.setCenter(txtField);
+        return txtField;
+    }
+
+    public static TextArea addAreaToNode(BorderPane node)
+    {
+        TextArea txtArea = new TextArea();
+        node.setCenter(txtArea);
+        return txtArea;
     }
 
     public static void showTasks(String status) {
@@ -62,6 +175,7 @@ public class Navigation {
 
         }
 
+
         tasks.setLayoutX(SC_WIDTH / 8);
         tasks.setLayoutY(SC_HEIGHT * 0.1);
 
@@ -71,17 +185,22 @@ public class Navigation {
 
         rightSide.getChildren().add(getPaneWithText("Имя пользователя", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.WHITE));
 
-
+        rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.6, BACKGROUND));
 
         StackPane button = getPaneWithText("+", (int) (SC_HEIGHT*0.1), (int) (SC_HEIGHT*0.1), Color.GREEN);
-
+        button.setOnMouseClicked((MouseEvent click) ->
+        {
+            removeAll();
+            addNewTask();
+        });
 
         rightSide.getChildren().add(button);
 
+        mainScreen.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND));
         mainScreen.getChildren().add(rightSide);
 
-
-
+        mainScreen.setLayoutX(SC_WIDTH*0.1);
+        mainScreen.setLayoutY(SC_HEIGHT*0.1);
         root.getChildren().add(mainScreen);
     }
 

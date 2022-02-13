@@ -29,11 +29,11 @@ public class BackLog {
 
 
 
-        Task task1 = new Task("kek1", Priority.MIDDLE, "blbablablalba","11.02.2022", user1, user1);
-        Task task2 = new Task("kek2", Priority.MIDDLE, "blbablablalba","11.02.2022", user1, user1);
-        Task task3 = new Task("kek3", Priority.MIDDLE, "blbablablalba","11.02.2022", user1, user1);
-        Task task4 = new Task("kek4", Priority.MIDDLE, "blbablablalba","11.02.2022", user1, user1);
-        Task task5 = new Task("kek5", Priority.MIDDLE, "blbablablalba","11.02.2022", user1, user1);
+        Task task1 = new Task("kek1", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task2 = new Task("kek2", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task3 = new Task("kek3", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task4 = new Task("kek4", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task5 = new Task("kek5", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
 
 
 
