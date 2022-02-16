@@ -30,6 +30,7 @@ public class Jira4U extends Application {
     public final static int SC_WIDTH = 1600;
     public final static int SC_HEIGHT = 900;
     public final static Color BACKGROUND = Color.AQUA;
+
     //endregion
 
 
@@ -37,6 +38,7 @@ public class Jira4U extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        UserBase.createSomeUsers();
         BackLog.createTasks();
         Navigation.showTasks(STATUS_All);
 

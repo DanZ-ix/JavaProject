@@ -20,6 +20,9 @@ import static jira4u.Jira4U.*;
 
 public class Navigation {
 
+    private static final Color TYPES_NOT_IN_FOCUS = Color.LIGHTBLUE;
+    private static final Color TYPE_IN_FOCUS = Color.INDIANRED;
+    public final static Color TASK_COLOR = Color.WHITE;
 
     public static void addNewTask()
     {
@@ -40,16 +43,10 @@ public class Navigation {
 
 
         BorderPane priorityPane = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.ORANGERED, "Приоритет");
-
         ComboBox<String> priorityComboBox = addComboBox(priorityPane, priorities);
-
-
-
-
         nameStatusPriority.getChildren().add(priorityPane);
 
 
-        String priority = Jira4U.priorities[3];
 
         box.getChildren().add(nameStatusPriority);
         box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
@@ -65,13 +62,26 @@ public class Navigation {
 
         box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));
 
-        people.getChildren().add(getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Исполнитель"));
+
+        BorderPane worker = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Исполнитель");
+        ComboBox<String> workerCombobox = addComboBox(worker, UserBase.getAllUserNames());
+        people.getChildren().add(worker);
+
+
+
         people.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));
-        people.getChildren().add(getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Проверяющий"));
+
+        BorderPane reviewer = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Проверяющий");
+        ComboBox<String> reviewerComboBox = addComboBox(reviewer, UserBase.getAllUserNames());
+        people.getChildren().add(reviewer);
 
         lowDesc.getChildren().add(people);
         lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
-        lowDesc.getChildren().add(getPaneWithText(" ", SC_HEIGHT / 7, SC_WIDTH / 5, Color.WHITE, "Срок сдачи"));
+
+
+        BorderPane deadLine = getPaneWithText(" ", SC_HEIGHT / 7, SC_WIDTH / 5, Color.WHITE, "Срок сдачи");
+        TextField deadLineTxtField = addFieldToNode(deadLine);
+        lowDesc.getChildren().add(deadLine);
 
 
         StackPane button = getPaneWithText("Добавить", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.GREEN);
@@ -79,13 +89,34 @@ public class Navigation {
 
         button.setOnMouseClicked((MouseEvent click) -> {
 
+            User workerUser = new User("", "", "", Access.LOW);
+            User reviewerUser = workerUser;
+
+            try
+            {
+                reviewerUser = UserBase.getUserByName(reviewerComboBox.getValue());
+            }
+            catch (NoUserException ex)
+            {
+                reviewerUser = new User("", "", ex.getMessage(), Access.LOW);
+            }
+
+            try
+            {
+                workerUser = UserBase.getUserByName(workerCombobox.getValue());
+            }
+            catch (NoUserException ex)
+            {
+                workerUser = new User("", "", ex.getMessage(), Access.LOW);
+            }
+
             Task newTask = new Task(
                     nameTextField.getText(),
                     priorityComboBox.getValue(),
                     descTextArea.getText(),
-                    "huy",
-                    new User("dowkaod", "dopwad", "Name", new Access("LOW")),
-                    new User("dowkaod", "dopwad", "Name", new Access("LOW"))
+                    deadLineTxtField.getText(),
+                    workerUser,
+                    reviewerUser
             );
 
             BackLog.addTask(newTask);
@@ -147,7 +178,7 @@ public class Navigation {
         taskTypes.getChildren().add(new Rectangle(15, 15, BACKGROUND));
 
 
-        addTaskTypes(taskTypes);
+        addTaskTypes(taskTypes, status);
 
         tasks.getChildren().add(taskTypes);
 
@@ -160,7 +191,7 @@ public class Navigation {
                 continue;
 
 
-            StackPane oneTaskGroup = getPaneWithText(BackLog.getTask(i).getName(), SC_HEIGHT / 15, SC_WIDTH / 2, Color.WHITE);
+            StackPane oneTaskGroup = getPaneWithText(BackLog.getTask(i).getName(), SC_HEIGHT / 15, SC_WIDTH / 2, TASK_COLOR);
 
             final int taskNum = i;
 
@@ -205,11 +236,35 @@ public class Navigation {
     }
 
 
-    private static void addTaskTypes(HBox taskTypes) {
+    private static void addTaskTypes(HBox taskTypes, String status) {
 
-        StackPane actualPane = getPaneWithText("Актуальные", SC_HEIGHT / 17, SC_WIDTH / 6, Color.FORESTGREEN);
-        StackPane finishedPane = getPaneWithText("Завершенные", SC_HEIGHT / 17, SC_WIDTH / 6, Color.ORANGE);
-        StackPane allPane = getPaneWithText("Все", SC_HEIGHT / 17, SC_WIDTH / 6, Color.LIGHTBLUE);
+
+        StackPane actualPane = new StackPane();
+        StackPane finishedPane = new StackPane();
+        StackPane allPane = new StackPane();
+
+
+        switch (status)
+        {
+            case STATUS_All:
+                actualPane = getPaneWithText("Актуальные", SC_HEIGHT / 17, SC_WIDTH / 6, TYPES_NOT_IN_FOCUS);
+                finishedPane = getPaneWithText("Завершенные", SC_HEIGHT / 17, SC_WIDTH / 6, TYPES_NOT_IN_FOCUS);
+                allPane = getPaneWithText("Все", SC_HEIGHT / 17, SC_WIDTH / 6, TYPE_IN_FOCUS);
+                break;
+
+            case STATUS_DONE:
+                actualPane = getPaneWithText("Актуальные", SC_HEIGHT / 17, SC_WIDTH / 6, TYPES_NOT_IN_FOCUS);
+                finishedPane = getPaneWithText("Завершенные", SC_HEIGHT / 17, SC_WIDTH / 6, TYPE_IN_FOCUS);
+                allPane = getPaneWithText("Все", SC_HEIGHT / 17, SC_WIDTH / 6, TYPES_NOT_IN_FOCUS);
+                break;
+
+            case STATUS_IN_WORK:
+                actualPane = getPaneWithText("Актуальные", SC_HEIGHT / 17, SC_WIDTH / 6, TYPE_IN_FOCUS);
+                finishedPane = getPaneWithText("Завершенные", SC_HEIGHT / 17, SC_WIDTH / 6, TYPES_NOT_IN_FOCUS);
+                allPane = getPaneWithText("Все", SC_HEIGHT / 17, SC_WIDTH / 6, TYPES_NOT_IN_FOCUS);
+                break;
+
+        }
 
         actualPane.setOnMouseClicked((MouseEvent click) -> {
             removeAll();

@@ -25,7 +25,7 @@ public class BackLog {
 
     public static void createTasks()            //Костыль пока задачи создаются тут
     {
-        User user1 = new User("dowkaod", "dopwad", "Name", new Access("LOW"));
+        User user1 = UserBase.getUser(1);
 
 
 

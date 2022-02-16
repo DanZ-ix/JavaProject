@@ -3,7 +3,8 @@ package jira4u;
 public class Access {
 
     private String value;
-
+    public static final Access LOW = new Access("LOW");
+    public static final Access HIGH = new Access("HIGH");
 
     public Access (String value)
     {
