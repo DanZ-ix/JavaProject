@@ -9,11 +9,11 @@ public class User {
     private Access access;
     //endregion
 
-    public User(String login, String password, String name, Access access)
+    public User(String name, String password, Access access)
     {
-        this.setLogin(login);
-        this.setPassword(password);
         this.setName(name);
+        this.setPassword(password);
+
         this.setAccess(access);
 
 
@@ -22,14 +22,6 @@ public class User {
 
 
     //region getters-setters
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
 
     public String getPassword() {
         return password;

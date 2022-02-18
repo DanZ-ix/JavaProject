@@ -40,7 +40,9 @@ public class Jira4U extends Application {
 
         UserBase.createSomeUsers();
         BackLog.createTasks();
-        Navigation.showTasks(STATUS_All);
+
+        Navigation.showLoginPage(false);
+        //Navigation.showTasks(STATUS_All);
 
 
         Scene scene = new Scene(root, SC_WIDTH, SC_HEIGHT);

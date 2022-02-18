@@ -1,6 +1,7 @@
 package jira4u;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class UserBase {
 
@@ -8,9 +9,9 @@ public class UserBase {
 
     private static User currentUser;
 
-    public static void createUser(String login, String password, String name, Access access)
+    public static void createUser(String name, String password, Access access)
     {
-        User tempUser = new User(login, password, name, access);
+        User tempUser = new User(name, password, access);
         addUser(tempUser);
     }
 
@@ -43,11 +44,11 @@ public class UserBase {
 
     public static void createSomeUsers()
     {
-        createUser("login1", "password", "name1", Access.HIGH);
-        createUser("login2", "password", "name2", Access.HIGH);
-        createUser("login3", "password", "name3", Access.HIGH);
-        createUser("login4", "password", "name4", Access.HIGH);
-        createUser("login5", "password", "name5", Access.HIGH);
+        createUser("name1", "password", Access.HIGH);
+        createUser("name2", "password", Access.HIGH);
+        createUser("name3", "password", Access.HIGH);
+        createUser("name4", "password", Access.HIGH);
+        createUser("name5", "password", Access.HIGH);
 
     }
 
@@ -67,19 +68,48 @@ public class UserBase {
     {
         for (int i = 0; i < getUserCount();i++)
         {
-            if (name == getUser(i).getName())
+            if (Objects.equals(name, getUser(i).getName()))
                 return getUser(i);
         }
 
-        throw new NoUserException("Нет такого пользователя");
+        throw new NoUserException();
 
     }
+
+
+    public static User login(String login, String password) throws FailedLoginException, NoUserException
+    {
+        User user = getUserByName(login);
+
+        if (Objects.equals(user.getPassword(), password))
+        {
+            return user;
+        }
+        else
+            throw new FailedLoginException();
+
+    }
+
+
+
+
+
 }
+
 
 
 class NoUserException extends Exception{
 
-    public NoUserException(String message){
-        super(message);
+    public NoUserException(){
+        super("Нет такого пользователя");
+    }
+}
+
+
+
+class FailedLoginException extends Exception{
+
+    public FailedLoginException(){
+        super("Ошибка входа");
     }
 }
