@@ -368,7 +368,7 @@ public class Navigation {
 
         if (withError)
         {
-            loginFields.getChildren().add(getPaneWithText("Ошибка регистрации", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.RED));
+            loginFields.getChildren().add(getPaneWithText("Ошибка входа", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.RED));
         }
 
 
