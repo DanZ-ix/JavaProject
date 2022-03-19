@@ -17,105 +17,110 @@ import javafx.scene.control.ComboBox;
 
 import java.util.Objects;
 
-import static jira4u.Jira4U.*;
+import static jira4u.Jira4U.*; //импортируем константы, методы и т д из главного класса
 
-public class Navigation {
+public class Navigation {  //собрание методов, которые отвечают за отрисовку страничек
 
-    private static final Color TYPES_NOT_IN_FOCUS = Color.LIGHTBLUE;
+    private static final Color TYPES_NOT_IN_FOCUS = Color.LIGHTBLUE; //константы, отвечают за цвет 
     private static final Color TYPE_IN_FOCUS = Color.INDIANRED;
     public final static Color TASK_COLOR = Color.WHITE;
 
 
 
-    //------------------PAGES-----------------------------------------
+ 
 
-    public static void addNewTask()
+    public static void addNewTask()    //функция отрисовки страницы добавлния задания 
     {
         VBox box = new VBox();
 
-        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
+        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND)); //отступ сверху
 
 
-        HBox nameStatusPriority = new HBox();
+        HBox nameStatusPriority = new HBox(); // название задачи + приоритет 
 
-
+        //для расположения элементов
         BorderPane namePane = getPaneWithText("", SC_HEIGHT / 15, SC_WIDTH / 5, Color.ORANGE, "Название задачи");
-        TextField nameTextField = addFieldToNode(namePane);
-        nameStatusPriority.getChildren().add(namePane);
+        TextField nameTextField = addFieldToNode(namePane); //поле с вводом 
+        nameStatusPriority.getChildren().add(namePane); //добавляем в горизонтальную коробку з+пр
 
+        nameStatusPriority.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));//отступы
         nameStatusPriority.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
-        nameStatusPriority.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
 
-
+        //то же самое с приоитетом
         BorderPane priorityPane = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.ORANGERED, "Приоритет");
         ComboBox<String> priorityComboBox = addComboBox(priorityPane, priorities);
         nameStatusPriority.getChildren().add(priorityPane);
 
 
-
+        // в большую вертикальную коробку добавляем маленькую с н з + пр
         box.getChildren().add(nameStatusPriority);
-        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
+        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND)); // отступ
 
 
-
+        //описание 
         BorderPane descPane = getPaneWithText(" ", SC_HEIGHT / 4, (int) (SC_WIDTH * 0.8), Color.WHITE, "Описание");
         TextArea descTextArea = addAreaToNode(descPane);
         box.getChildren().add(descPane);
-
+        
+        //коробка нижняя горизонтальная + коробка вертикальная для людей
         HBox lowDesc = new HBox();
         VBox people = new VBox();
 
-        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));
+        box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND)); //отступ
 
-
+        //добавляем выпадающий список с людьми
         BorderPane worker = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Исполнитель");
         ComboBox<String> workerCombobox = addComboBox(worker, UserBase.getAllUserNames());
         people.getChildren().add(worker);
 
 
 
-        people.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));
+        people.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));//отступ
 
+        //проверяющие
         BorderPane reviewer = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Проверяющий");
         ComboBox<String> reviewerComboBox = addComboBox(reviewer, UserBase.getAllUserNames());
         people.getChildren().add(reviewer);
 
+        //добавляем коробку с людьми в горизонтальную
         lowDesc.getChildren().add(people);
+        //отступ справа
         lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
 
-
+        
         BorderPane deadLine = getPaneWithText(" ", SC_HEIGHT / 7, SC_WIDTH / 5, Color.WHITE, "Срок сдачи");
         TextField deadLineTxtField = addFieldToNode(deadLine);
         lowDesc.getChildren().add(deadLine);
 
+        
+        StackPane button = getPaneWithText("Добавить", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.GREEN);//функция принимает только int значения, а там получется дробь, поэтому умножаем 
+        lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));//отступ справа от даты
 
-        StackPane button = getPaneWithText("Добавить", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.GREEN);
-        lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
-
+        //выставляем действия, которые происходят при нажатии на кнопку
         button.setOnMouseClicked((MouseEvent click) -> {
 
             User workerUser = new User("", "",  Access.LOW);
             User reviewerUser = workerUser;
 
-            try
+            try                         //если не найдет человека
             {
                 reviewerUser = UserBase.getUserByName(reviewerComboBox.getValue());
             }
             catch (NoUserException ex)
             {
-                reviewerUser = new User(ex.getMessage(), "", Access.LOW);
+                reviewerUser = new User(ex.getMessage(), "", Access.LOW); //вместо человека - ошибка
             }
 
             try
             {
-                workerUser = UserBase.getUserByName(workerCombobox.getValue());
+                workerUser = UserBase.getUserByName(workerCombobox.getValue()); //то же самое
             }
             catch (NoUserException ex)
             {
                 workerUser = new User(ex.getMessage(), "", Access.LOW);
             }
 
-            Task newTask = new Task(
+            Task newTask = new Task(            // функция возвращает текст, который написан в данный момент в поле
                     nameTextField.getText(),
                     priorityComboBox.getValue(),
                     descTextArea.getText(),
@@ -127,24 +132,24 @@ public class Navigation {
             BackLog.addTask(newTask);
 
 
-            removeAll();
+            removeAll(); //при нажатии кнопки добавить, появляется главный экран
             showTasks(STATUS_All);
 
         });
 
 
-        lowDesc.getChildren().add(button);
+        lowDesc.getChildren().add(button); //в нижнюю горизонтальную коробку добавляется кнопка "добавить"
 
 
-        box.getChildren().add(lowDesc);
+        box.getChildren().add(lowDesc); //в большую вертикальную добавляем
 
-        box.setLayoutY(SC_HEIGHT * 0.05);
+        box.setLayoutY(SC_HEIGHT * 0.05); //отступы
         box.setLayoutX(SC_WIDTH * 0.1);
 
-        root.getChildren().add(box);
+        root.getChildren().add(box); // добавляем все в главный экран (рут)
     }
 
-    public static void showTasks(String status) {
+    public static void showTasks(String status) { //экран с задачами 
 
 
         HBox mainScreen = new HBox();
@@ -156,19 +161,19 @@ public class Navigation {
         taskTypes.getChildren().add(new Rectangle(15, 15, BACKGROUND));
 
 
-        addTaskTypes(taskTypes, status);
+        addTaskTypes(taskTypes, status); //функция, чтобы добавить типы задач, передаем гориз коробку и статус - переменная которая отвечают за нажатую кнопку
 
         tasks.getChildren().add(taskTypes);
 
 
-        for (int i = 0; i < BackLog.getLength(); i++) {
-            if (status.equals(STATUS_IN_WORK) && Objects.equals(BackLog.getTask(i).getStatus(), STATUS_DONE))
+        for (int i = 0; i < BackLog.getLength(); i++) { //цикл добавления задач, проходится по всем задачам 
+            if (status == STATUS_IN_WORK && BackLog.getTask(i).getStatus()== STATUS_DONE)
                 continue;
 
-            if (status.equals(STATUS_DONE) && Objects.equals(BackLog.getTask(i).getStatus(), STATUS_IN_WORK))
+            if (status == STATUS_DONE && BackLog.getTask(i).getStatus() == STATUS_IN_WORK)
                 continue;
 
-
+            //создание кнопки одной задачи
             StackPane oneTaskGroup = getPaneWithText(BackLog.getTask(i).getName(), SC_HEIGHT / 15, SC_WIDTH / 2, TASK_COLOR);
 
             final int taskNum = i;
@@ -185,13 +190,13 @@ public class Navigation {
         }
 
 
-        tasks.setLayoutX(SC_WIDTH / 8);
-        tasks.setLayoutY(SC_HEIGHT * 0.1);
+        tasks.setLayoutX(SC_WIDTH / 8); //отступ слева
+        tasks.setLayoutY(SC_HEIGHT * 0.1); //отступ сверху
 
         mainScreen.getChildren().add(tasks);
 
         VBox rightSide = new VBox();
-
+      
         rightSide.getChildren().add(getPaneWithText(UserBase.getCurrentUser().getName(), (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.WHITE));
         rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ));
 
@@ -200,7 +205,7 @@ public class Navigation {
         logout.setOnMouseClicked((MouseEvent click) ->
         {
             removeAll();
-            showLoginPage(false);
+            showLoginPage(false);//
         });
 
         rightSide.getChildren().add(logout);
