@@ -1,6 +1,6 @@
 package jira4u;
 
-
+//Привет Юля
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -14,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
-
 import java.util.Objects;
 
 import static jira4u.Jira4U.*; //импортируем константы, методы и т д из главного класса

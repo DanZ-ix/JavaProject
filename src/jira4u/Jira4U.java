@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
+
 public class Jira4U extends Application {
 
     public static Group root = new Group();
@@ -41,8 +42,6 @@ public class Jira4U extends Application {
         scene.setFill(BACKGROUND);
 
 
-
-
         primaryStage.setTitle("Jira4U");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -53,8 +52,6 @@ public class Jira4U extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
-
 
 }
 

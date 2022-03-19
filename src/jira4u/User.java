@@ -3,9 +3,8 @@ package jira4u;
 public class User {
 
     //region fields
-    private String login;
-    private String password;
     private String name;
+    private String password;
     private Access access;
     //endregion
 
