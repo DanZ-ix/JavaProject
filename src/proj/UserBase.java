@@ -1,4 +1,4 @@
-package jira4u;
+package proj;
 
 import java.util.ArrayList;
 import java.util.Objects;

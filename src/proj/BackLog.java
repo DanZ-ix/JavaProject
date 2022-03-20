@@ -1,4 +1,4 @@
-package jira4u;
+package proj;
 
 
 import java.util.ArrayList;
@@ -29,11 +29,11 @@ public class BackLog {
 
 
 
-        Task task1 = new Task("Задача", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
-        Task task2 = new Task("Задача", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
-        Task task3 = new Task("Задачакек", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
-        Task task4 = new Task("kek4", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
-        Task task5 = new Task("kek5", Jira4U.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task1 = new Task("Задача", MAIN.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task2 = new Task("Задача", MAIN.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task3 = new Task("Задачакек", MAIN.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task4 = new Task("kek4", MAIN.priorities[3], "blbablablalba","11.02.2022", user1, user1);
+        Task task5 = new Task("kek5", MAIN.priorities[3], "blbablablalba","11.02.2022", user1, user1);
 
 
 

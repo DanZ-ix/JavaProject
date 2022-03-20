@@ -1,6 +1,6 @@
-package jira4u;
+package proj;
 
-//Привет Юля
+
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -16,7 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
 import java.util.Objects;
 
-import static jira4u.Jira4U.*; //импортируем константы, методы и т д из главного класса
+import static proj.MAIN.*; //импортируем константы, методы и т д из главного класса
 
 public class Navigation {  //собрание методов, которые отвечают за отрисовку страничек
 
@@ -449,7 +449,7 @@ public class Navigation {  //собрание методов, которые о�
 
 
 
-        //loginFields.getChildren().add(loginButton);
+        
         loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.1, BACKGROUND));
         loginFields.getChildren().add(registerButton);
         loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.1, BACKGROUND));
@@ -549,7 +549,7 @@ public class Navigation {  //собрание методов, которые о�
         node.setCenter(txtArea);
         return txtArea;
     }
-    //Перегрузка (Без подписи)
+    //перегрузка (без подписи)
     private static StackPane getPaneWithText(String text, int height, int width, Color color) {
         StackPane pane = new StackPane();
 

@@ -1,4 +1,4 @@
-package jira4u;
+package proj;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 
 
-public class Jira4U extends Application {
+public class MAIN extends Application {
 
     public static Group root = new Group();
 

@@ -1,4 +1,4 @@
-package jira4u;
+package proj;
 
 public class User {
 
