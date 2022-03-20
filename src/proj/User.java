@@ -5,15 +5,15 @@ public class User {
     //region fields
     private String name;
     private String password;
-    private Access access;
+
     //endregion
 
-    public User(String name, String password, Access access)
+    public User(String name, String password)
     {
         this.setName(name);
         this.setPassword(password);
 
-        this.setAccess(access);
+
 
 
     }
@@ -38,12 +38,5 @@ public class User {
         this.name = name;
     }
 
-    public Access getAccess() {
-        return access;
-    }
-
-    public void setAccess(Access access) {
-        this.access = access;
-    }
     //endregion
 }

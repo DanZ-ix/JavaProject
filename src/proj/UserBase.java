@@ -9,9 +9,9 @@ public class UserBase {
 
     private static User currentUser;
 
-    public static void createUser(String name, String password, Access access)
+    public static void createUser(String name, String password)
     {
-        User tempUser = new User(name, password, access);
+        User tempUser = new User(name, password);
         addUser(tempUser);
     }
 
@@ -44,11 +44,11 @@ public class UserBase {
 
     public static void createSomeUsers()
     {
-        createUser("name1", "password", Access.HIGH);
-        createUser("name2", "password", Access.HIGH);
-        createUser("name3", "password", Access.HIGH);
-        createUser("name4", "password", Access.HIGH);
-        createUser("name5", "password", Access.HIGH);
+        createUser("name1", "password");
+        createUser("name2", "password");
+        createUser("name3", "password");
+        createUser("name4", "password");
+        createUser("name5", "password");
 
     }
 

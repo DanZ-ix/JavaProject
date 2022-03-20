@@ -98,7 +98,7 @@ public class Navigation {  //собрание методов, которые о�
         //выставляем действия, которые происходят при нажатии на кнопку
         button.setOnMouseClicked((MouseEvent click) -> {
 
-            User workerUser = new User("", "",  Access.LOW);
+            User workerUser = new User("", "");
             User reviewerUser = workerUser;
 
             try                         //если не найдет человека
@@ -107,7 +107,7 @@ public class Navigation {  //собрание методов, которые о�
             }
             catch (NoUserException ex)
             {
-                reviewerUser = new User(ex.getMessage(), "", Access.LOW); //вместо человека - ошибка
+                reviewerUser = new User(ex.getMessage(), ""); //вместо человека - ошибка
             }
 
             try
@@ -116,7 +116,7 @@ public class Navigation {  //собрание методов, которые о�
             }
             catch (NoUserException ex)
             {
-                workerUser = new User(ex.getMessage(), "", Access.LOW);
+                workerUser = new User(ex.getMessage(), "");
             }
 
             Task newTask = new Task(            // функция возвращает текст, который написан в данный момент в поле
@@ -427,7 +427,7 @@ public class Navigation {  //собрание методов, которые о�
                 }
                 catch (NoUserException ex)
                 {
-                    UserBase.createUser(loginTextField.getText(), passwordTextField.getText(),Access.LOW);
+                    UserBase.createUser(loginTextField.getText(), passwordTextField.getText());
                     UserBase.setCurrentUser(UserBase.getUser(UserBase.getUserCount()-1));
                     removeAll();
                     showTasks(STATUS_All);
