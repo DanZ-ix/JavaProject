@@ -20,8 +20,8 @@ import static proj.MAIN.*; //импортируем константы, мето
 
 public class Navigation {  //собрание методов, которые отвечают за отрисовку страничек
 
-    private static final Color TYPES_NOT_IN_FOCUS = Color.LIGHTBLUE; //константы, отвечают за цвет 
-    private static final Color TYPE_IN_FOCUS = Color.INDIANRED;
+    private static final Color TYPES_NOT_IN_FOCUS = Color.rgb(252, 204, 233); //константы, отвечают за цвет 
+    private static final Color TYPE_IN_FOCUS = Color.rgb(255, 150, 214);
     public final static Color TASK_COLOR = Color.WHITE;
 
 
@@ -92,7 +92,7 @@ public class Navigation {  //собрание методов, которые о�
         lowDesc.getChildren().add(deadLine);
 
         
-        StackPane button = getPaneWithText("Добавить", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.GREEN);//функция принимает только int значения, а там получется дробь, поэтому умножаем 
+        StackPane button = getPaneWithText("Добавить 💘", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.15), Color.rgb(179, 229, 255));//функция принимает только int значения, а там получется дробь, поэтому умножаем 
         lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));//отступ справа от даты
 
         //выставляем действия, которые происходят при нажатии на кнопку
@@ -199,7 +199,7 @@ public class Navigation {  //собрание методов, которые о�
         rightSide.getChildren().add(getPaneWithText(UserBase.getCurrentUser().getName(), (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.WHITE));
         rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ));
 
-        StackPane logout = getPaneWithText("Выйти", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.BLUE);
+        StackPane logout = getPaneWithText("Выйти 🐾", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
 
         logout.setOnMouseClicked((MouseEvent click) ->
         {
@@ -213,7 +213,7 @@ public class Navigation {  //собрание методов, которые о�
 
         rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.4, BACKGROUND));
 
-        StackPane button = getPaneWithText("+", (int) (SC_HEIGHT*0.1), (int) (SC_HEIGHT*0.1), Color.GREEN);
+        StackPane button = getPaneWithText("+", (int) (SC_HEIGHT*0.1), (int) (SC_HEIGHT*0.1), Color.rgb(161, 219, 136));
         button.setOnMouseClicked((MouseEvent click) ->
         {
             removeAll();
@@ -239,14 +239,14 @@ public class Navigation {  //собрание методов, которые о�
 
         HBox nameStatusPriority = new HBox();
 
-        nameStatusPriority.getChildren().add(getPaneWithText(task.getName(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.ORANGE, "Название задачи"));
+        nameStatusPriority.getChildren().add(getPaneWithText(task.getName(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.rgb(255, 213, 171), "Название задачи"));
         nameStatusPriority.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
 
 
         BorderPane status = new BorderPane();
         if (Objects.equals(task.getStatus(), STATUS_IN_WORK))
         {
-            status = getPaneWithText(task.getStatus(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.VIOLET, "Статус, нажмите чтобы выполнить");
+            status = getPaneWithText(task.getStatus(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.rgb(238, 204, 255), "Статус, нажмите чтобы выполнить");
             status.setOnMouseClicked((click)->
             {
                 task.setDone();
@@ -256,13 +256,13 @@ public class Navigation {  //собрание методов, которые о�
         }
         else
         {
-            status = getPaneWithText(task.getStatus(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.VIOLET, "Статус");
+            status = getPaneWithText(task.getStatus(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.rgb(238, 204, 255), "Статус");
         }
 
         nameStatusPriority.getChildren().add(status);
 
         nameStatusPriority.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
-        nameStatusPriority.getChildren().add(getPaneWithText(task.getPriority(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.ORANGERED, "Приоритет"));
+        nameStatusPriority.getChildren().add(getPaneWithText(task.getPriority(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.rgb(255, 133, 117), "Приоритет"));
 
         box.getChildren().add(nameStatusPriority);
 
@@ -284,7 +284,7 @@ public class Navigation {  //собрание методов, которые о�
         lowDesc.getChildren().add(getPaneWithText(task.getDeadLine(), SC_HEIGHT / 7, SC_WIDTH / 5, Color.WHITE, "Срок сдачи"));
 
 
-        StackPane button = getPaneWithText("Вернуться", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.GREEN);
+        StackPane button = getPaneWithText("Вернуться 🌹", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.15), Color.rgb(199, 247, 255));
         lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
 
         button.setOnMouseClicked((MouseEvent click) -> {
@@ -328,8 +328,8 @@ public class Navigation {  //собрание методов, которые о�
 
         loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.1, BACKGROUND));
 
-        StackPane loginButton = getPaneWithText("Войти", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.LIGHTGREEN);
-        StackPane registerButton = getPaneWithText("Зарегистрироваться", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.LIGHTGREEN);
+        StackPane loginButton = getPaneWithText("Войти  💖", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.PALETURQUOISE);
+        StackPane registerButton = getPaneWithText("Зарегистрироваться 💕", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.PALETURQUOISE);
 
 
 
@@ -372,7 +372,7 @@ public class Navigation {  //собрание методов, которые о�
 
         if (withError)
         {
-            loginFields.getChildren().add(getPaneWithText("Ошибка входа", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.RED));
+            loginFields.getChildren().add(getPaneWithText("Ошибка входа", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.LIGHTCORAL));
         }
 
 
@@ -411,7 +411,7 @@ public class Navigation {  //собрание методов, которые о�
         loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.1, BACKGROUND));
 
 
-        StackPane registerButton = getPaneWithText("Зарегистрироваться", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.LIGHTGREEN);
+        StackPane registerButton = getPaneWithText("Зарегистрироваться 🍒", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.PALETURQUOISE);
 
 
 
@@ -456,7 +456,7 @@ public class Navigation {  //собрание методов, которые о�
 
         if (withError)
         {
-            loginFields.getChildren().add(getPaneWithText("Ошибка регистрации", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.RED));
+            loginFields.getChildren().add(getPaneWithText("Ошибка регистрации", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.LIGHTCORAL));
         }
 
 
@@ -559,7 +559,7 @@ public class Navigation {  //собрание методов, которые о�
         Text txt = new Text(text);
 
         txt.setTextAlignment(TextAlignment.CENTER);
-        txt.setFont(new Font(30));
+        txt.setFont(new Font("Times New Roman", 30));
 
         rect.setX(0);
         rect.setY(0);
@@ -571,7 +571,7 @@ public class Navigation {  //собрание методов, которые о�
         rect.setHeight(height);
         rect.setFill(color);
 
-        rect.setStyle(" -fx-stroke: black; -fx-stroke-width: 2;");
+        rect.setStyle(" -fx-stroke: lightgrey; -fx-stroke-width: 1;");
 
 
         pane.getChildren().add(rect);
@@ -590,7 +590,7 @@ public class Navigation {  //собрание методов, которые о�
         StackPane pane = getPaneWithText(text, height, width, color);
 
         Label lbl = new Label(label);
-
+        lbl.setFont(new Font("Times New Roman", 20));
         borderPane.setCenter(pane);
         borderPane.setTop(lbl);
 

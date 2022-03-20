@@ -22,7 +22,7 @@ public class MAIN extends Application {
 
     public final static int SC_WIDTH = 1600;
     public final static int SC_HEIGHT = 900;
-    public final static Color BACKGROUND = Color.AQUA;
+    public final static Color BACKGROUND = Color.MISTYROSE;
 
     //endregion
 
@@ -35,7 +35,7 @@ public class MAIN extends Application {
         BackLog.createTasks();
 
         Navigation.showLoginPage(false);
-        //Navigation.showTasks(STATUS_All);
+
 
 
         Scene scene = new Scene(root, SC_WIDTH, SC_HEIGHT);

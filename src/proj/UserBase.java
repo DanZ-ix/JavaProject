@@ -44,11 +44,11 @@ public class UserBase {
 
     public static void createSomeUsers()
     {
-        createUser("name1", "password");
-        createUser("name2", "password");
-        createUser("name3", "password");
-        createUser("name4", "password");
-        createUser("name5", "password");
+        createUser("Екатерина", "1234");
+        createUser("Павел", "1234");
+        createUser("Даниил", "1234");
+        createUser("Татьяна", "1234");
+        createUser("Сергей", "1234");
 
     }
 
