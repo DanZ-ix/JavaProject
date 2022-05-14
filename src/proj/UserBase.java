@@ -15,9 +15,6 @@ public class UserBase {
         addUser(tempUser);
     }
 
-
-
-
     public static void addUser(User user)
     {
         userArr.add(user);
@@ -49,6 +46,7 @@ public class UserBase {
         createUser("Даниил", "1234");
         createUser("Татьяна", "1234");
         createUser("Сергей", "1234");
+        createUser("", "");
 
     }
 
@@ -66,19 +64,16 @@ public class UserBase {
 
     public static User getUserByName(String name) throws NoUserException
     {
-        for (int i = 0; i < getUserCount();i++)
-        {
-            if (Objects.equals(name, getUser(i).getName()))
-                return getUser(i);
-        }
-
-        throw new NoUserException();
-
+        return (DbConnector.getUserByLogin(name));
     }
 
 
     public static User login(String login, String password) throws FailedLoginException, NoUserException
     {
+        if (login == "")
+        {
+            return UserBase.getUserByName("");
+        }
         User user = getUserByName(login);
 
         if (Objects.equals(user.getPassword(), password))
@@ -89,27 +84,11 @@ public class UserBase {
             throw new FailedLoginException();
 
     }
-
-
-
-
-
 }
 
 
 
-class NoUserException extends Exception{
-
-    public NoUserException(){
-        super("Нет такого пользователя");
-    }
-}
 
 
 
-class FailedLoginException extends Exception{
 
-    public FailedLoginException(){
-        super("Ошибка входа");
-    }
-}

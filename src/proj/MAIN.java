@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 
 
-public class MAIN extends Application {
+public class MAIN  extends Application  {
 
     public static Group root = new Group();
 
@@ -29,8 +29,9 @@ public class MAIN extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws Exception{
 
+        DbConnector.setConnection();
         UserBase.createSomeUsers();
         BackLog.createTasks();
 

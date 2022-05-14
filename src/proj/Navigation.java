@@ -14,6 +14,8 @@ import javafx.scene.control.Label;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
+
+import java.sql.SQLException;
 import java.util.Objects;
 
 import static proj.MAIN.*; //импортируем константы, методы и т д из главного класса
@@ -306,7 +308,7 @@ public class Navigation {  //собрание методов, которые о�
     }
 
 
-    public static void showLoginPage(boolean withError)
+    public static void showLoginPage(boolean withError)         //BD DONE
     {
 
         BorderPane loginPage = new BorderPane();
@@ -345,18 +347,26 @@ public class Navigation {  //собрание методов, которые о�
 
         loginButton.setOnMouseClicked((MouseEvent click) ->
                 {
-                    try
-                    {
-                        UserBase.setCurrentUser(UserBase.login(loginTextField.getText(), passwordTextField.getText()));
+                    if(Objects.equals(loginTextField.getText(), ""))  //Бекдор, пока не подключена база
+                    {                                                                   //IF ELSE УБРАТЬ!!!!
+                        UserBase.setCurrentUser(UserBase.getUser(1));
                         removeAll();
                         showTasks(STATUS_All);
                     }
-                    catch (NoUserException | FailedLoginException ex)
-                    {
-                        removeAll();
-                        showLoginPage(true);
-                    }
+                    else {
 
+
+                        try {
+
+                            UserBase.setCurrentUser(UserBase.login(loginTextField.getText(), passwordTextField.getText()));
+                            removeAll();
+                            showTasks(STATUS_All);
+
+                        } catch (NoUserException | FailedLoginException ex) {
+                            removeAll();
+                            showLoginPage(true);
+                        }
+                    }
                 });
 
 
@@ -382,7 +392,7 @@ public class Navigation {  //собрание методов, которые о�
         root.getChildren().add(loginPage);
     }
 
-    public static void showRegisterPage(boolean withError)
+    public static void showRegisterPage(boolean withError)      //BD DONE
     {
 
         BorderPane loginPage = new BorderPane();
@@ -417,20 +427,21 @@ public class Navigation {  //собрание методов, которые о�
 
         registerButton.setOnMouseClicked((MouseEvent click) ->
         {
+
             if (Objects.equals(passwordRepeatTextField.getText(), passwordTextField.getText()))
             {
                 try
                 {
-                    UserBase.getUserByName(loginTextField.getText());
-                    removeAll();
-                    showRegisterPage(true);
-                }
-                catch (NoUserException ex)
-                {
-                    UserBase.createUser(loginTextField.getText(), passwordTextField.getText());
-                    UserBase.setCurrentUser(UserBase.getUser(UserBase.getUserCount()-1));
+                    User newUser = DbConnector.addUser(loginTextField.getText(), passwordTextField.getText());
+                    UserBase.setCurrentUser(newUser);
                     removeAll();
                     showTasks(STATUS_All);
+                }
+                catch (SQLException ex)
+                {
+                    removeAll();
+                    System.out.println(ex.getMessage());
+                    showRegisterPage(true);
                 }
             }
             else
@@ -438,8 +449,6 @@ public class Navigation {  //собрание методов, которые о�
                 removeAll();
                 showRegisterPage(true);
             }
-
-
 
         });
 

@@ -13,9 +13,6 @@ public class User {
         this.setName(name);
         this.setPassword(password);
 
-
-
-
     }
 
 
