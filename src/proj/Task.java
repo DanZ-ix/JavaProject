@@ -13,6 +13,9 @@ public class Task {
     private User worker;
     private User reviewer;
     private String status;
+    private String worker_str;
+    private String reviewer_str;
+    private int taskId;
     //endregion
 
     public Task(String name, String priority, String description, String deadLine, User worker, User reviewer)
@@ -26,6 +29,18 @@ public class Task {
         this.status = "В работе";
 
     }
+    public Task(String name, String priority, String description,
+                String deadLine, String worker, String reviewer, int taskId, String status)
+    {
+        this.name = name;
+        this.description = description;
+        this.deadLine = deadLine;
+        this.priority = priority;
+        this.setWorker_str(worker);
+        this.setReviewer_str(reviewer);
+        this.status = status;
+        this.setTaskId(taskId);
+    }
 
 
     //region getters-setters
@@ -33,11 +48,6 @@ public class Task {
     public String getStatus()
     {
         return(this.status);
-    }
-
-    public void setDone()
-    {
-        this.status = "Выполнено";
     }
 
     public String getName() {
@@ -87,6 +97,30 @@ public class Task {
 
     public void setReviewer(User reviewer) {
         this.reviewer = reviewer;
+    }
+
+    public String getWorker_str() {
+        return worker_str;
+    }
+
+    public void setWorker_str(String worker_str) {
+        this.worker_str = worker_str;
+    }
+
+    public String getReviewer_str() {
+        return reviewer_str;
+    }
+
+    public void setReviewer_str(String reviewer_str) {
+        this.reviewer_str = reviewer_str;
+    }
+
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
     }
 
     //endregion

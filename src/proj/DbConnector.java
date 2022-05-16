@@ -1,6 +1,7 @@
 package proj;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Locale;
 
 
@@ -35,12 +36,15 @@ public class DbConnector {
         User retUser;
         try
         {
-            ResultSet rsUser = statement.executeQuery("Select * from USERS where deleted = 0 and login = " + login + ";");
+            ResultSet rsUser = statement.executeQuery("Select * from USERS where deleted = 0 and login = '" + login + "'");
+            rsUser.next();
+
             retUser = new User(rsUser.getString("login"), rsUser.getString("password"));
             addLog("LOG_IN", retUser);
         }
         catch (SQLException ex)
         {
+            System.out.println(ex);
             throw new NoUserException();
         }
 
@@ -50,7 +54,7 @@ public class DbConnector {
     public static User addUser(String login, String password) throws SQLException
     {
 
-        String query = "Insert INTO USERS (login, password) VALUES ("+ login +", "+ password + ")";
+        String query = "Insert INTO USERS (login, password) VALUES ('"+ login+ "', '" + password + "')";
 
         statement.executeUpdate(query);
         User newUser = new User(login, password);
@@ -65,21 +69,148 @@ public class DbConnector {
         addLog(action, UserBase.getCurrentUser());          //он ставится по умолчанию
     }
 
+
     public static void addLog(String action, User user)     //Перегрузка логирования с двумя аргументами
+    {                                                       //Используется когда нет действующего пользователя
+        addLog(action, user, 0);
+    }
+
+    public static void addLog(String action, User user, int task_id)     //Перегрузка логирования с двумя аргументами
     {                                                       //Используется когда нет действующего пользователя
         try
         {
-            ResultSet resAction = statement.executeQuery("Select * from ACTION_LIST where name = " + action + "; ");
+            ResultSet resAction = statement.executeQuery("Select * from ACTION_LIST where name = '" + action + "' ");
+            resAction.next();
             int action_id = resAction.getInt("action_id");
 
-            statement.executeUpdate("Insert INTO Logging (user_id, action_id) VALUES ("+
-                    user.getName() +", "+ action_id + " );");
+            statement.executeUpdate("Insert INTO Logging (user_id, action_id) VALUES ('"+
+                    user.getName() +"', '"+ action_id + "')");
 
         }
         catch (SQLException ex)
         {
             System.out.println("Ошибка вставки лога");
         }
+    }
+
+    public static ArrayList<Task> getTasks()
+    {
+
+        String query = "select t.name task_name, p.name pr_name, t.description description, t.deadline deadline, " +
+                "r.login worker, v.login reviewer, t.task_id task_id, s.name status from tasks t "+
+                "inner join status s on t.STATUS_STATUS_ID = s.status_id " +
+                "inner join priority p on t.priority_priority_id = p.priority_id " +
+                "inner join users r on t.responsible_id = r.user_id " +
+                "inner join users v on t.verifying_id = v.user_id " +
+                "where t.deleted = 0";
+        //System.out.println(query);
+        try
+        {
+
+            ResultSet res = statement.executeQuery(query);
+
+            ArrayList<Task> taskArr = new ArrayList<Task>();
+
+            while(res.next())
+            {
+
+                Task oneTask = new Task(res.getString("task_name"),
+                        res.getString("pr_name"),
+                        res.getString("description"),
+                        res.getString("deadline"),
+                        res.getString("worker"),
+                        res.getString("reviewer"),
+                        res.getInt("task_id"),
+                        res.getString("status"));
+                taskArr.add(oneTask);
+
+            }
+
+            return taskArr;
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex);
+        }
+        return null;
+    }
+
+    public static void setTaskDone(int taskId)
+    {
+        String query = "update tasks set status_status_id = 2 where task_id = " + taskId;
+
+        try
+        {
+            statement.executeUpdate(query);
+            addLog("Задача выполнена");
+        }
+        catch(SQLException ex)
+        {
+            System.out.println("Ошибка изменения статуса задачи");
+            System.out.println(ex);
+        }
+    }
+
+    public static void addTask(Task task)
+    {
+        try
+        {
+            ResultSet respResSet = statement.executeQuery("select user_id from users where login = '" + task.getWorker_str() + "'");
+            respResSet.next();
+            int resp_id = respResSet.getInt("user_id");
+
+            ResultSet verResSet = statement.executeQuery("select user_id from users where login = '" + task.getReviewer_str() + "'");
+            verResSet.next();
+            int ver_id = verResSet.getInt("user_id");
+
+            ResultSet priorResSet = statement.executeQuery("select PRIORITY_ID from priority where name = '" + task.getPriority() + "'");
+            priorResSet.next();
+            int prior_id = priorResSet.getInt("PRIORITY_ID");
+
+
+            String query = "insert into tasks (name, description, responsible_id, " +
+                    "VERIFYING_ID, STATUS_STATUS_ID, deadline, PRIORITY_PRIORITY_ID) " +
+                    "VALUES ('" + task.getName() + "', '" + task.getDescription() +  "', " +
+                    resp_id + ", " + ver_id + ", " + 1 + ", '" + task.getDeadLine() + "', " +
+                    prior_id + ")";
+
+            statement.executeUpdate(query);
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex);
+        }
+    }
+
+
+    public static String[] getAllUserNames()
+    {
+
+        try
+        {
+            ResultSet countRS = statement.executeQuery("select count(*) c from users where deleted = 0");
+            countRS.next();
+            int count = countRS.getInt("c");
+
+            ResultSet rs = statement.executeQuery("select login from users where deleted = 0");
+
+            String[] retString = new String[count];
+            int i = 0;
+            while (rs.next())
+            {
+                retString[i] = rs.getString("login");
+                i++;
+            }
+
+            return retString;
+        }
+        catch(SQLException ex)
+        {
+            System.out.println(ex);
+        }
+
+
+        return null;
     }
 
 }

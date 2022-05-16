@@ -17,7 +17,7 @@ public class MAIN  extends Application  {
     public final static String STATUS_IN_WORK = "В работе";
     public final static String STATUS_All= "Все";
 
-    public final static  String[] priorities = new String[]{"Самый низкий", "Низкий", "Средний", "Высокий", "Самый высокий", "Критический"};
+    public final static  String[] priorities = new String[] {"Самый низкий", "Низкий", "Средний", "Высокий", "Самый высокий", "Критический"};
 
 
     public final static int SC_WIDTH = 1600;
@@ -32,11 +32,8 @@ public class MAIN  extends Application  {
     public void start(Stage primaryStage) throws Exception{
 
         DbConnector.setConnection();
-        UserBase.createSomeUsers();
-        BackLog.createTasks();
 
         Navigation.showLoginPage(false);
-
 
 
         Scene scene = new Scene(root, SC_WIDTH, SC_HEIGHT);

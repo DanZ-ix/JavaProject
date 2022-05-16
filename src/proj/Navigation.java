@@ -16,6 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static proj.MAIN.*; //импортируем константы, методы и т д из главного класса
@@ -26,9 +27,6 @@ public class Navigation {  //собрание методов, которые о�
     private static final Color TYPE_IN_FOCUS = Color.rgb(255, 150, 214);
     public final static Color TASK_COLOR = Color.WHITE;
 
-
-
- 
 
     public static void addNewTask()    //функция отрисовки страницы добавлния задания 
     {
@@ -71,7 +69,7 @@ public class Navigation {  //собрание методов, которые о�
 
         //добавляем выпадающий список с людьми
         BorderPane worker = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Исполнитель");
-        ComboBox<String> workerCombobox = addComboBox(worker, UserBase.getAllUserNames());
+        ComboBox<String> workerCombobox = addComboBox(worker, DbConnector.getAllUserNames());
         people.getChildren().add(worker);
 
 
@@ -80,7 +78,7 @@ public class Navigation {  //собрание методов, которые о�
 
         //проверяющие
         BorderPane reviewer = getPaneWithText(" ", SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Проверяющий");
-        ComboBox<String> reviewerComboBox = addComboBox(reviewer, UserBase.getAllUserNames());
+        ComboBox<String> reviewerComboBox = addComboBox(reviewer, DbConnector.getAllUserNames());
         people.getChildren().add(reviewer);
 
         //добавляем коробку с людьми в горизонтальную
@@ -100,38 +98,17 @@ public class Navigation {  //собрание методов, которые о�
         //выставляем действия, которые происходят при нажатии на кнопку
         button.setOnMouseClicked((MouseEvent click) -> {
 
-            User workerUser = new User("", "");
-            User reviewerUser = workerUser;
-
-            try                         //если не найдет человека
-            {
-                reviewerUser = UserBase.getUserByName(reviewerComboBox.getValue());
-            }
-            catch (NoUserException ex)
-            {
-                reviewerUser = new User(ex.getMessage(), ""); //вместо человека - ошибка
-            }
-
-            try
-            {
-                workerUser = UserBase.getUserByName(workerCombobox.getValue()); //то же самое
-            }
-            catch (NoUserException ex)
-            {
-                workerUser = new User(ex.getMessage(), "");
-            }
-
             Task newTask = new Task(            // функция возвращает текст, который написан в данный момент в поле
                     nameTextField.getText(),
                     priorityComboBox.getValue(),
                     descTextArea.getText(),
                     deadLineTxtField.getText(),
-                    workerUser,
-                    reviewerUser
+                    workerCombobox.getValue(),
+                    reviewerComboBox.getValue(),
+                    1, STATUS_IN_WORK
             );
 
-            BackLog.addTask(newTask);
-
+            DbConnector.addTask(newTask);
 
             removeAll(); //при нажатии кнопки добавить, появляется главный экран
             showTasks(STATUS_All);
@@ -166,22 +143,26 @@ public class Navigation {  //собрание методов, которые о�
 
         tasks.getChildren().add(taskTypes);
 
+        ArrayList<Task> taskArr = DbConnector.getTasks();
 
-        for (int i = 0; i < BackLog.getLength(); i++) { //цикл добавления задач, проходится по всем задачам 
-            if (status == STATUS_IN_WORK && BackLog.getTask(i).getStatus()== STATUS_DONE)
+        for (int i = 0; i < taskArr.size(); i++) {                  //цикл добавления задач, проходится по всем задачам
+
+            String taskStatus = taskArr.get(i).getStatus();
+
+            if (status == STATUS_IN_WORK && Objects.equals(taskStatus, STATUS_DONE))
                 continue;
 
-            if (status == STATUS_DONE && BackLog.getTask(i).getStatus() == STATUS_IN_WORK)
+            if (status == STATUS_DONE && Objects.equals(taskStatus, STATUS_IN_WORK))
                 continue;
 
             //создание кнопки одной задачи
-            StackPane oneTaskGroup = getPaneWithText(BackLog.getTask(i).getName(), SC_HEIGHT / 15, SC_WIDTH / 2, TASK_COLOR);
+            StackPane oneTaskGroup = getPaneWithText(taskArr.get(i).getName(), SC_HEIGHT / 15, SC_WIDTH / 2, TASK_COLOR);
 
             final int taskNum = i;
 
             oneTaskGroup.setOnMouseClicked((MouseEvent click) -> {
                 removeAll();
-                showOneTask(BackLog.getTask(taskNum));
+                showOneTask(taskArr.get(taskNum));
             });
 
 
@@ -251,7 +232,7 @@ public class Navigation {  //собрание методов, которые о�
             status = getPaneWithText(task.getStatus(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.rgb(238, 204, 255), "Статус, нажмите чтобы выполнить");
             status.setOnMouseClicked((click)->
             {
-                task.setDone();
+                DbConnector.setTaskDone(task.getTaskId());
                 removeAll();
                 showTasks(STATUS_All);
             });
@@ -277,9 +258,9 @@ public class Navigation {  //собрание методов, которые о�
 
         box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));
 
-        people.getChildren().add(getPaneWithText(task.getWorker().getName(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Исполнитель"));
+        people.getChildren().add(getPaneWithText(task.getWorker_str(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Исполнитель"));
         people.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.05, BACKGROUND));
-        people.getChildren().add(getPaneWithText(task.getReviewer().getName(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Проверяющий"));
+        people.getChildren().add(getPaneWithText(task.getReviewer_str(), SC_HEIGHT / 15, SC_WIDTH / 5, Color.WHITE, "Проверяющий"));
 
         lowDesc.getChildren().add(people);
         lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
@@ -308,7 +289,7 @@ public class Navigation {  //собрание методов, которые о�
     }
 
 
-    public static void showLoginPage(boolean withError)         //BD DONE
+    public static void showLoginPage(boolean withError)
     {
 
         BorderPane loginPage = new BorderPane();
@@ -347,26 +328,19 @@ public class Navigation {  //собрание методов, которые о�
 
         loginButton.setOnMouseClicked((MouseEvent click) ->
                 {
-                    if(Objects.equals(loginTextField.getText(), ""))  //Бекдор, пока не подключена база
-                    {                                                                   //IF ELSE УБРАТЬ!!!!
-                        UserBase.setCurrentUser(UserBase.getUser(1));
+
+                    try {
+
+                        UserBase.setCurrentUser(UserBase.login(loginTextField.getText(), passwordTextField.getText()));
                         removeAll();
                         showTasks(STATUS_All);
+
+                    } catch (NoUserException | FailedLoginException ex) {
+                        removeAll();
+                        System.out.println(ex);
+                        showLoginPage(true);
                     }
-                    else {
 
-
-                        try {
-
-                            UserBase.setCurrentUser(UserBase.login(loginTextField.getText(), passwordTextField.getText()));
-                            removeAll();
-                            showTasks(STATUS_All);
-
-                        } catch (NoUserException | FailedLoginException ex) {
-                            removeAll();
-                            showLoginPage(true);
-                        }
-                    }
                 });
 
 
@@ -392,7 +366,7 @@ public class Navigation {  //собрание методов, которые о�
         root.getChildren().add(loginPage);
     }
 
-    public static void showRegisterPage(boolean withError)      //BD DONE
+    public static void showRegisterPage(boolean withError)
     {
 
         BorderPane loginPage = new BorderPane();
