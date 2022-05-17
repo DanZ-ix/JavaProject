@@ -97,12 +97,12 @@ END;
 CREATE TABLE tasks (
     task_id              INTEGER NOT NULL,
     name                 VARCHAR2(60) NOT NULL,
-    description          CLOB NOT NULL,
+    description          CLOB,
     responsible_id       INTEGER NOT NULL,
     verifying_id         INTEGER,
     priority_priority_id INTEGER NOT NULL,
     status_status_id     INTEGER NOT NULL,
-	deadline			 VARCHAR(20) NOT NULL,
+	deadline			 VARCHAR(20),
     deleted              NUMBER(2) NOT NULL
 );
 
@@ -193,5 +193,15 @@ values ('Копирайтинг', 'Написать 10 постов на тем�
 
 Insert into tasks (name, description, responsible_id, verifying_id, priority_priority_id, deadline) 
 values ('Презентация', 'Презентовать заказчику дизайн сайта', 1, 2, 1, '3.08.2022');
+
+insert into action_list (name) values ('REGISTRATION');
+insert into action_list (name) values ('LOGIN');
+insert into action_list (name) values ('TASK_CREATED');
+insert into action_list (name) values ('TASK_DELETED');
+insert into action_list (name) values ('TASK_RESTORED');
+insert into action_list (name) values ('TASK_DONE');
+
+
+
 
 

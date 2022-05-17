@@ -14,8 +14,6 @@ public class User {
         this.setPassword(password);
     }
 
-
-
     //region getters-setters
 
     public String getPassword() {

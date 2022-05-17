@@ -1,6 +1,7 @@
 package proj;
 
 
+import com.sun.javafx.scene.control.skin.CustomColorDialog;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -118,6 +119,17 @@ public class Navigation {  //собрание методов, которые о�
 
         lowDesc.getChildren().add(button); //в нижнюю горизонтальную коробку добавляется кнопка "добавить"
 
+        StackPane backButton = getPaneWithText("Назад", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.15), Color.PALETURQUOISE);
+
+        backButton.setOnMouseClicked((MouseEvent click) ->
+        {
+            removeAll();
+            showTasks(STATUS_All);
+        });
+
+        lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));//отступ справа от даты
+
+        lowDesc.getChildren().add(backButton);
 
         box.getChildren().add(lowDesc); //в большую вертикальную добавляем
 
@@ -127,7 +139,14 @@ public class Navigation {  //собрание методов, которые о�
         root.getChildren().add(box); // добавляем все в главный экран (рут)
     }
 
-    public static void showTasks(String status) { //экран с задачами 
+
+    public static void showTasks(String status)
+    {
+        showTasks(status, 1);
+    }
+
+
+    public static void showTasks(String status, int page) { //экран с задачами
 
 
         HBox mainScreen = new HBox();
@@ -136,24 +155,76 @@ public class Navigation {  //собрание методов, которые о�
 
         HBox taskTypes = new HBox();
 
-        taskTypes.getChildren().add(new Rectangle(15, 15, BACKGROUND));
-
+        //taskTypes.getChildren().add(new Rectangle(15, 15, BACKGROUND));
 
         addTaskTypes(taskTypes, status); //функция, чтобы добавить типы задач, передаем гориз коробку и статус - переменная которая отвечают за нажатую кнопку
 
         tasks.getChildren().add(taskTypes);
 
-        ArrayList<Task> taskArr = DbConnector.getTasks();
+        ArrayList<Task> taskArr = DbConnector.getTasks(0);
 
-        for (int i = 0; i < taskArr.size(); i++) {                  //цикл добавления задач, проходится по всем задачам
+        int task_count = 0;
+        int last_task = 0;
+
+        if (status == STATUS_All)
+        {
+            if (page * 8 < taskArr.size())
+                last_task = page * 8;
+            else
+                last_task = taskArr.size();
+            task_count = taskArr.size();
+        }
+
+
+
+        if (status == STATUS_DONE)
+        {
+            for (Task task: taskArr)
+            {
+                if (Objects.equals(task.getStatus(), STATUS_DONE))
+                    task_count++;
+            }
+            if (page * 8 < task_count)
+                last_task = page * 8;
+            else
+                last_task = task_count;
+        }
+
+        if (status == STATUS_IN_WORK)
+        {
+            for (Task task: taskArr)
+            {
+                if (Objects.equals(task.getStatus(), STATUS_IN_WORK))
+                    task_count++;
+            }
+            if (page * 8 < task_count)
+                last_task = page * 8;
+            else
+                last_task = task_count;
+
+        }
+        int finalLast_task = last_task;
+
+
+        for (int i = (page - 1) * 8; i < last_task; i++) {                  //цикл добавления задач, проходится по всем задачам
 
             String taskStatus = taskArr.get(i).getStatus();
 
             if (status == STATUS_IN_WORK && Objects.equals(taskStatus, STATUS_DONE))
+            {
+                last_task++;
                 continue;
+            }
+
 
             if (status == STATUS_DONE && Objects.equals(taskStatus, STATUS_IN_WORK))
+            {
+                last_task++;
                 continue;
+            }
+
+
+
 
             //создание кнопки одной задачи
             StackPane oneTaskGroup = getPaneWithText(taskArr.get(i).getName(), SC_HEIGHT / 15, SC_WIDTH / 2, TASK_COLOR);
@@ -162,7 +233,7 @@ public class Navigation {  //собрание методов, которые о�
 
             oneTaskGroup.setOnMouseClicked((MouseEvent click) -> {
                 removeAll();
-                showOneTask(taskArr.get(taskNum));
+                showOneTask(taskArr.get(taskNum), 0);
             });
 
 
@@ -175,6 +246,44 @@ public class Navigation {  //собрание методов, которые о�
         tasks.setLayoutX(SC_WIDTH / 8); //отступ слева
         tasks.setLayoutY(SC_HEIGHT * 0.1); //отступ сверху
 
+        tasks.getChildren().add(new Rectangle(10, 20, BACKGROUND));
+
+        HBox next_prev_buttons = new HBox();
+
+        StackPane prev = getPaneWithText("prev", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
+        StackPane page_num = getPaneWithText("" + page, (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
+        StackPane next = getPaneWithText("next", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
+
+
+        int finalTask_count = task_count;
+        next.setOnMouseClicked((MouseEvent click) ->
+        {
+            if (finalLast_task < finalTask_count)
+            {
+                removeAll();
+                showTasks(status, page + 1);
+            }
+
+        });
+
+        prev.setOnMouseClicked((MouseEvent click) ->
+        {
+            if (page != 1)
+            {
+                removeAll();
+                showTasks(status, page - 1);
+            }
+        });
+
+
+        next_prev_buttons.getChildren().addAll(prev,
+                new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ),
+                page_num,
+                new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ),
+                next);
+
+
+        tasks.getChildren().add(next_prev_buttons);
         mainScreen.getChildren().add(tasks);
 
         VBox rightSide = new VBox();
@@ -192,9 +301,16 @@ public class Navigation {  //собрание методов, которые о�
 
         rightSide.getChildren().add(logout);
 
+        rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ));
+        StackPane recycleBin = getPaneWithText("Корзина",  (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
+        recycleBin.setOnMouseClicked((MouseEvent cl) ->
+        {
+            removeAll();
+            showRecycleBin(1);
+        });
+        rightSide.getChildren().add(recycleBin);
 
-
-        rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.4, BACKGROUND));
+        rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.2, BACKGROUND));
 
         StackPane button = getPaneWithText("+", (int) (SC_HEIGHT*0.1), (int) (SC_HEIGHT*0.1), Color.rgb(161, 219, 136));
         button.setOnMouseClicked((MouseEvent click) ->
@@ -214,7 +330,114 @@ public class Navigation {  //собрание методов, которые о�
     }
 
 
-    public static void showOneTask(Task task) {
+    public static void showRecycleBin(int page)
+    {
+        HBox mainScreen = new HBox();
+
+        VBox tasks = new VBox();
+
+        tasks.getChildren().add(getPaneWithText("Корзина",  (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER));
+
+        ArrayList<Task> taskArr = DbConnector.getTasks(1);
+
+
+        int task_count;
+        int last_task;
+        if (page * 8 < taskArr.size())
+            last_task = page * 8;
+        else
+            last_task = taskArr.size();
+        task_count = taskArr.size();
+
+        int finalLast_task = last_task;
+
+        for (int i = (page - 1) * 8; i < last_task; i++) {                  //цикл добавления задач, проходится по всем задачам
+
+            //создание кнопки одной задачи
+            StackPane oneTaskGroup = getPaneWithText(taskArr.get(i).getName(), SC_HEIGHT / 15, SC_WIDTH / 2, TASK_COLOR);
+
+            final int taskNum = i;
+
+            oneTaskGroup.setOnMouseClicked((MouseEvent click) -> {
+                removeAll();
+                showOneTask(taskArr.get(taskNum), 1);
+            });
+
+
+            tasks.getChildren().add(new Rectangle(10, 10, BACKGROUND));
+            tasks.getChildren().add(oneTaskGroup);
+
+        }
+
+
+        tasks.setLayoutX(SC_WIDTH / 8); //отступ слева
+        tasks.setLayoutY(SC_HEIGHT * 0.1); //отступ сверху
+
+        tasks.getChildren().add(new Rectangle(10, 20, BACKGROUND));
+
+        HBox next_prev_buttons = new HBox();
+
+        StackPane prev = getPaneWithText("prev", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
+        StackPane page_num = getPaneWithText("" + page, (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
+        StackPane next = getPaneWithText("next", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
+
+
+        int finalTask_count = task_count;
+        next.setOnMouseClicked((MouseEvent click) ->
+        {
+            if (finalLast_task < finalTask_count)
+            {
+                removeAll();
+                showRecycleBin( page + 1);
+            }
+
+        });
+
+        prev.setOnMouseClicked((MouseEvent click) ->
+        {
+            if (page != 1)
+            {
+                removeAll();
+                showRecycleBin(page - 1);
+            }
+        });
+
+
+        next_prev_buttons.getChildren().addAll(prev,
+                new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ),
+                page_num,
+                new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ),
+                next);
+
+
+        tasks.getChildren().add(next_prev_buttons);
+        mainScreen.getChildren().add(tasks);
+
+        VBox rightSide = new VBox();
+
+
+        rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ));
+
+        StackPane logout = getPaneWithText("Вернуться 🐾", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.15), Color.LAVENDER);
+
+        logout.setOnMouseClicked((MouseEvent click) ->
+        {
+            removeAll();
+            showTasks(STATUS_All);
+        });
+
+        rightSide.getChildren().add(logout);
+
+
+        mainScreen.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND));
+        mainScreen.getChildren().add(rightSide);
+
+        mainScreen.setLayoutX(SC_WIDTH*0.1);
+        mainScreen.setLayoutY(SC_HEIGHT*0.1);
+        root.getChildren().add(mainScreen);
+    }
+
+    public static void showOneTask(Task task, int deleted) {
         VBox box = new VBox();
 
         box.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
@@ -264,8 +487,37 @@ public class Navigation {  //собрание методов, которые о�
 
         lowDesc.getChildren().add(people);
         lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
-        lowDesc.getChildren().add(getPaneWithText(task.getDeadLine(), SC_HEIGHT / 7, SC_WIDTH / 5, Color.WHITE, "Срок сдачи"));
 
+        VBox deadlineDelete = new VBox();
+
+        deadlineDelete.getChildren().add(getPaneWithText(task.getDeadLine(), SC_HEIGHT / 10, SC_WIDTH / 5, Color.WHITE, "Срок сдачи"));
+
+        StackPane deleteButton;
+        if (deleted == 0)
+        {
+            deleteButton = getPaneWithText("Удалить", SC_HEIGHT / 10, SC_WIDTH / 5, Color.RED);
+            deleteButton.setOnMouseClicked((MouseEvent click) ->
+            {
+                DbConnector.deleteTask(task);
+                removeAll();
+                showTasks(STATUS_All);
+            });
+        }
+        else
+        {
+            deleteButton = getPaneWithText("Восстановить", SC_HEIGHT / 10, SC_WIDTH / 5, Color.RED);
+            deleteButton.setOnMouseClicked((MouseEvent click) ->
+            {
+                DbConnector.restoreTask(task);
+                removeAll();
+                showTasks(STATUS_All);
+            });
+        }
+
+        deadlineDelete.getChildren().add(new Rectangle(SC_WIDTH * 0.05, SC_HEIGHT * 0.05, BACKGROUND));
+        deadlineDelete.getChildren().add(deleteButton);
+
+        lowDesc.getChildren().add(deadlineDelete);
 
         StackPane button = getPaneWithText("Вернуться 🌹", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.15), Color.rgb(199, 247, 255));
         lowDesc.getChildren().add(new Rectangle(SC_WIDTH * 0.1, SC_HEIGHT * 0.1, BACKGROUND));
@@ -433,9 +685,22 @@ public class Navigation {  //собрание методов, которые о�
 
 
         
-        loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.1, BACKGROUND));
+        //loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.1, BACKGROUND));
         loginFields.getChildren().add(registerButton);
-        loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.1, BACKGROUND));
+        loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.05, BACKGROUND));
+
+        StackPane backButton = getPaneWithText("Назад", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.PALETURQUOISE);
+
+        backButton.setOnMouseClicked((MouseEvent click) ->
+        {
+            removeAll();
+            showLoginPage(false);
+        });
+
+
+        loginFields.getChildren().add(backButton);
+
+        loginFields.getChildren().add(new Rectangle(SC_WIDTH*0.3, SC_HEIGHT*0.05, BACKGROUND));
 
         if (withError)
         {
@@ -448,6 +713,9 @@ public class Navigation {  //собрание методов, которые о�
 
         root.getChildren().add(loginPage);
     }
+
+
+
 
     //----------------------PRIVATE METHODS---------------------------------
 

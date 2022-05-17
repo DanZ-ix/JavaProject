@@ -40,7 +40,7 @@ public class DbConnector {
             rsUser.next();
 
             retUser = new User(rsUser.getString("login"), rsUser.getString("password"));
-            addLog("LOG_IN", retUser);
+            addLog("LOGIN", retUser);
         }
         catch (SQLException ex)
         {
@@ -71,29 +71,33 @@ public class DbConnector {
 
 
     public static void addLog(String action, User user)     //Перегрузка логирования с двумя аргументами
-    {                                                       //Используется когда нет действующего пользователя
+    {                                                       //Используется когда нет задачи
         addLog(action, user, 0);
     }
 
-    public static void addLog(String action, User user, int task_id)     //Перегрузка логирования с двумя аргументами
-    {                                                       //Используется когда нет действующего пользователя
+    public static void addLog(String action, User user, int task_id)     //Перегрузка логирования с тремя аргументами
+    {                                                               //Используется когда все есть
         try
         {
-            ResultSet resAction = statement.executeQuery("Select * from ACTION_LIST where name = '" + action + "' ");
+            ResultSet resAction = statement.executeQuery("Select * from ACTION_LIST where deleted = 0 and name = '" + action + "' ");
             resAction.next();
             int action_id = resAction.getInt("action_id");
 
-            statement.executeUpdate("Insert INTO Logging (user_id, action_id) VALUES ('"+
-                    user.getName() +"', '"+ action_id + "')");
+            ResultSet userRs = statement.executeQuery("select user_id from users where deleted = 0 and login = '" + user.getName()+"'");
+            userRs.next();
+            int user_id = userRs.getInt("user_id");
+            statement.executeUpdate("Insert INTO Logging (users_user_id, action_list_action_id, task_id) VALUES ( "+
+                    user_id +", "+ action_id + ",  " + task_id + " )" );
 
         }
         catch (SQLException ex)
         {
             System.out.println("Ошибка вставки лога");
+            System.out.println(ex);
         }
     }
 
-    public static ArrayList<Task> getTasks()
+    public static ArrayList<Task> getTasks(int deleted)
     {
 
         String query = "select t.name task_name, p.name pr_name, t.description description, t.deadline deadline, " +
@@ -102,7 +106,7 @@ public class DbConnector {
                 "inner join priority p on t.priority_priority_id = p.priority_id " +
                 "inner join users r on t.responsible_id = r.user_id " +
                 "inner join users v on t.verifying_id = v.user_id " +
-                "where t.deleted = 0";
+                "where t.deleted = " + deleted;
         //System.out.println(query);
         try
         {
@@ -142,7 +146,7 @@ public class DbConnector {
         try
         {
             statement.executeUpdate(query);
-            addLog("Задача выполнена");
+            addLog("TASK_DONE", UserBase.getCurrentUser(), taskId);
         }
         catch(SQLException ex)
         {
@@ -175,6 +179,14 @@ public class DbConnector {
                     prior_id + ")";
 
             statement.executeUpdate(query);
+
+            ResultSet taskRs = statement.executeQuery("select task_seq.currval from dual");
+
+            taskRs.next();
+            int task_id = taskRs.getInt("CURRVAL");
+
+
+            addLog("TASK_CREATED", UserBase.getCurrentUser(), task_id);
         }
         catch (SQLException ex)
         {
@@ -212,5 +224,35 @@ public class DbConnector {
 
         return null;
     }
+
+    public static void deleteTask(Task task)
+    {
+        try
+        {
+            String query = "update tasks set deleted = 1 where task_id = " + task.getTaskId();
+            statement.executeQuery(query);
+            addLog("TASK_DELETED", UserBase.getCurrentUser(), task.getTaskId());
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex);
+        }
+    }
+
+    public static void restoreTask(Task task)
+    {
+        try
+        {
+            String query = "update tasks set deleted = 0 where task_id = " + task.getTaskId();
+            statement.executeQuery(query);
+            addLog("TASK_RESTORED", UserBase.getCurrentUser(), task.getTaskId());
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex);
+        }
+    }
+
+
 
 }

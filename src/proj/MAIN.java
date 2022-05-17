@@ -26,8 +26,6 @@ public class MAIN  extends Application  {
 
     //endregion
 
-
-
     @Override
     public void start(Stage primaryStage) throws Exception{
 
