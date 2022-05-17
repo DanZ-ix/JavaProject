@@ -288,7 +288,7 @@ public class Navigation {  //собрание методов, которые о�
 
         VBox rightSide = new VBox();
       
-        rightSide.getChildren().add(getPaneWithText(UserBase.getCurrentUser().getName(), (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.WHITE));
+        rightSide.getChildren().add(getPaneWithText(User.getCurrentUser().getName(), (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.2), Color.WHITE));
         rightSide.getChildren().add(new Rectangle(SC_WIDTH*0.1, SC_HEIGHT*0.1, BACKGROUND ));
 
         StackPane logout = getPaneWithText("Выйти 🐾", (int) (SC_HEIGHT*0.1), (int) (SC_WIDTH*0.1), Color.LAVENDER);
@@ -583,7 +583,7 @@ public class Navigation {  //собрание методов, которые о�
 
                     try {
 
-                        UserBase.setCurrentUser(UserBase.login(loginTextField.getText(), passwordTextField.getText()));
+                        User.setCurrentUser(User.login(loginTextField.getText(), passwordTextField.getText()));
                         removeAll();
                         showTasks(STATUS_All);
 
@@ -659,7 +659,7 @@ public class Navigation {  //собрание методов, которые о�
                 try
                 {
                     User newUser = DbConnector.addUser(loginTextField.getText(), passwordTextField.getText());
-                    UserBase.setCurrentUser(newUser);
+                    User.setCurrentUser(newUser);
                     removeAll();
                     showTasks(STATUS_All);
                 }
@@ -677,10 +677,6 @@ public class Navigation {  //собрание методов, которые о�
             }
 
         });
-
-
-
-
 
 
 

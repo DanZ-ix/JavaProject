@@ -66,7 +66,7 @@ public class DbConnector {
 
     public static void addLog(String action)                //Перегрузка логирования с одним аргументом
     {                                                       //Используется когда есть действующий пользователь,
-        addLog(action, UserBase.getCurrentUser());          //он ставится по умолчанию
+        addLog(action, User.getCurrentUser());          //он ставится по умолчанию
     }
 
 
@@ -146,7 +146,7 @@ public class DbConnector {
         try
         {
             statement.executeUpdate(query);
-            addLog("TASK_DONE", UserBase.getCurrentUser(), taskId);
+            addLog("TASK_DONE", User.getCurrentUser(), taskId);
         }
         catch(SQLException ex)
         {
@@ -186,7 +186,7 @@ public class DbConnector {
             int task_id = taskRs.getInt("CURRVAL");
 
 
-            addLog("TASK_CREATED", UserBase.getCurrentUser(), task_id);
+            addLog("TASK_CREATED", User.getCurrentUser(), task_id);
         }
         catch (SQLException ex)
         {
@@ -231,7 +231,7 @@ public class DbConnector {
         {
             String query = "update tasks set deleted = 1 where task_id = " + task.getTaskId();
             statement.executeQuery(query);
-            addLog("TASK_DELETED", UserBase.getCurrentUser(), task.getTaskId());
+            addLog("TASK_DELETED", User.getCurrentUser(), task.getTaskId());
         }
         catch (SQLException ex)
         {
@@ -245,7 +245,7 @@ public class DbConnector {
         {
             String query = "update tasks set deleted = 0 where task_id = " + task.getTaskId();
             statement.executeQuery(query);
-            addLog("TASK_RESTORED", UserBase.getCurrentUser(), task.getTaskId());
+            addLog("TASK_RESTORED", User.getCurrentUser(), task.getTaskId());
         }
         catch (SQLException ex)
         {
